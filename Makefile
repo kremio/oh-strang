@@ -18,7 +18,7 @@ set-native:
 	$(eval CXX := $(CLANG) -x c++)
 	$(eval CC := $(CLANG))
 	$(eval CPPFLAGS := -g -O2 -DHAS_TR1)
-	$(eval CXXFLAGS := -v -std=c++11 -stdlib=libc++ -I $(EMSCRIPTEN_HOME)/system/include)
+	$(eval CXXFLAGS := -v -std=c++11 -stdlib=libc++)
 	$(eval LDFLAGS := -lstdc++)
 	$(eval TARGET := native)
 
