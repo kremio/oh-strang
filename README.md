@@ -7,7 +7,7 @@ I'm sure they are plenty of good libraries written in portable C/C++ or JavaScri
 
 ## References
 Professor Gil Strang's lectures on linear algebra:
-http://web.mit.edu/18.06/www/videos.shtml
+http://web.mit.edu/18.06/www/videos.shtml  
 Emscripten:
 http://kripken.github.io/emscripten-site/index.html
 
