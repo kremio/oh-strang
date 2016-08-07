@@ -15,7 +15,7 @@ int main() {
   std::cout << (mat + mat).toString() << (mat - mat - mat).toString() << (999 * mat * 666).toString();
 
   Matrix<int, 3, 3> A = Matrix<int, 3, 3>(1);
-  Matrix<int, 3, 4> B = Matrix<int, 3, 4>(1);
+  Matrix<int, 3, 6> B = Matrix<int, 3, 6>(1);
 
   std::cout << "\n\n" << A.toString() << " *\n" << B.toString() << " =\n" << (A * B).toString();
   return 0;

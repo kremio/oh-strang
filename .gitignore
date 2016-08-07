@@ -1,6 +1,7 @@
 /*.html
 /*.js
 /makeenv
+.native
 # Compiled Object files
 *.slo
 *.lo

@@ -5,8 +5,10 @@ EMSDK_HOME = ~/playground/emscripten/emsdk_portable
 EMSCRIPTEN_HOME = $(EMSDK_HOME)/emscripten/1.35.0
 CLANG = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 
-SOURCES = $(wildcard */*.cpp) $(wildcard */*.c)
+SOURCES = $(wildcard src/*.cpp) $(wildcard src/*.c)
 OBJECTS = $(patsubst %.cpp,%.o,$(patsubst %.c,%.o,$(SOURCES)))
+TESTS = $(wildcard test/*.cpp) $(wildcard test/*.c)
+TESTS_OBJECTS = $(patsubst %.cpp,%.o,$(patsubst %.c,%.o,$(TESTS)))
 
 #Sets up the EMSDK environment inside make.
 #See gdw2 answer at https://stackoverflow.com/questions/7507810/howto-source-a-script-from-makefile/16490872#16490872
@@ -35,7 +37,12 @@ set-html: set-js
 compile: $(OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $(PROJECT).$(TARGET)
 
+compile-test: $(TESTS_OBJECTS)
+	$(CC) $(LDFLAGS) $^ -o $(PROJECT).test
+
 native: set-native compile
+
+test: set-native compile-test
 
 js: set-js show-vars compile
 
