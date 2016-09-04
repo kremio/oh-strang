@@ -52,7 +52,7 @@ class Comparator: public Comparator_Operator<T,
 
 template<typename T>
 class Matrix {
-private:
+protected:
 	std::vector<T> values;
 	std::size_t m;
 	std::size_t n;
@@ -91,7 +91,7 @@ public:
 	}
 
 	Matrix(std::size_t rows, std::size_t columns, T const &z0, T const &o1,
-			T _values[]) :
+			T* _values) :
 			Matrix(rows, columns, z0, o1) {
 		//convert to vector
 		std::vector<T> tmpVec(&_values[0], &_values[m * n]);
@@ -125,6 +125,10 @@ public:
 
 	const T& getOne() const{
 		return one;
+	}
+
+	T* getValues(){
+		return &values[0];
 	}
 
 	//Iterators
@@ -283,4 +287,24 @@ operator<<(std::basic_ostream<char>& __os, const Matrix<T>& A)
 	const std::string __str = A.toString();
     return _VSTD::__put_character_sequence(__os, __str.c_str(), __str.length());
 }
+
+ /* JavaScript numbers are always stored as double precision floating point numbers, following the international IEEE 754 standard */
+class DoubleMatrix : public Matrix<double> {
+	public:
+		static DoubleMatrix identity(const std::size_t& rows, const std::size_t& columns) {
+			return DoubleMatrix( rows, columns, Matrix<double>::identity( rows, columns, 0, 1 ).getValues() );
+		}
+
+		DoubleMatrix(): Matrix<double>(0, 0, 0, 1){}
+
+		DoubleMatrix(const std::size_t& rows, const std::size_t& columns) : Matrix<double>(rows, columns, 0, 1){}
+
+		DoubleMatrix(const std::size_t& rows, const std::size_t& columns, const double& fillValue) : Matrix<double>(rows, columns, 0, 1, fillValue){}
+
+		DoubleMatrix(std::size_t rows, std::size_t columns, double* _values) : Matrix<double>(rows, columns, 0, 1, _values) {}
+
+		DoubleMatrix scalarMul(double scalar) { return DoubleMatrix( m, n, (*this * scalar).getValues() ); }
+		DoubleMatrix matrixMul(DoubleMatrix matrix) { return DoubleMatrix( m, matrix.getColumnsCount(), (*this * matrix).getValues() ); };
+
+};
 

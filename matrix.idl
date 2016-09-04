@@ -1,0 +1,13 @@
+interface DoubleMatrix {
+		void DoubleMatrix(long rows, long columns);
+		void DoubleMatrix(long rows, long columns, double fillValue);
+		long getRowsCount();
+		long getColumnsCount();
+		double getValue(long row, long column);
+		double setValue(long row, long column, double val);
+		
+		[Value] DoubleMatrix scalarMul(double scalar);
+		[Value] DoubleMatrix matrixMul([Ref]DoubleMatrix scalar);
+		
+		[Value] static DoubleMatrix identity(long rows, long columns);
+};

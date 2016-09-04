@@ -36,15 +36,21 @@ set-html: set-js
 
 compile: $(OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $(PROJECT).$(TARGET)
+	
+compile-js : $(OBJECTS)
+	$(CC) $(LDFLAGS) $^ --post-js glue.js -o $(PROJECT).$(TARGET)
 
 compile-test: $(TESTS_OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $(PROJECT).test
+
+webidl-binding: matrix.idl
+	 $(shell bash -c "python  $(EMSCRIPTEN_HOME)/tools/webidl_binder.py matrix.idl glue")
 
 native: set-native compile
 
 test: set-native compile-test
 
-js: set-js show-vars compile
+js: set-js show-vars webidl-binding compile-js
 
 js-html: set-html show-vars compile
 
@@ -55,5 +61,6 @@ show-vars:
 
 clean:
 	rm -f */*.o
+	rm -f glue.*
 	rm -rf $(PROJECT).* */*.dSYM
 	rm -f makeenv

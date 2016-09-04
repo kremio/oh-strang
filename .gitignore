@@ -2,6 +2,10 @@
 /*.js
 /makeenv
 .native
+src/glue_wrapper.cpp
+glue.cpp
+*.pkl
+
 # Compiled Object files
 *.slo
 *.lo
