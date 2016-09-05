@@ -176,6 +176,49 @@ const lest::test specification[] =
 		EXPECT( (C * D) != (D * C) );
 	},
 
+	CASE( "Matrix transposition" ){
+		/*
+		  1 2 3    1 4
+		  4 5 6 to 2 5
+		           3 6
+		 */
+		int val[6] = {1,2,3,4,5,6};
+		int val_t[6] = {1,4,2,5,3,6};
+		Matrix<int> A( 2 ,3, 0, 1, val);
+		Matrix<int> B( 3, 2, 0, 1, val_t);
+
+		EXPECT( A.transpose() == B );
+		EXPECT( B.transpose().transpose() == B );
+
+	},
+
+	CASE("Swapping rows"){
+		int val[3] = {1,2,3};
+		int swap[3] = {3,2,1};
+		Matrix<int> A( 3 ,1, 0, 1, val);
+		Matrix<int> B( 3 ,1, 0, 1, swap);
+
+		EXPECT( A.swapRows(1,3) == B );
+		EXPECT( B.swapRows(1,2) == B.swapRows(2,1) );
+		EXPECT( A.swapRows(2,2) == A );
+
+		EXPECT_THROWS_AS( B.swapRows(2,4), std::out_of_range );
+		EXPECT_THROWS_AS( B.swapRows(0,2), std::out_of_range );
+	},
+
+	CASE("Swapping columns"){
+		int val[6] = {1, 2, 3, 11, 22, 33};
+		int swap[6] = {3, 2, 1, 33 , 22, 11};
+		Matrix<int> A( 2 ,3, 0, 1, val);
+		Matrix<int> B( 2 ,3, 0, 1, swap);
+
+		EXPECT( A.swapColumns(1,3) == B );
+		EXPECT( B.swapColumns(1,2) == B.swapColumns(2,1) );
+		EXPECT( A.swapColumns(2,2) == A );
+
+		EXPECT_THROWS_AS( B.swapColumns(2,4), std::out_of_range );
+		EXPECT_THROWS_AS( B.swapColumns(0,2), std::out_of_range );
+	}
 };
 
 int main( int argc, char * argv[] )

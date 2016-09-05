@@ -154,6 +154,73 @@ public:
 		return matrix.str();
 	}
 
+	//Transpose
+	Matrix<T> transpose(){
+		T _values[m * n];
+		int index = 0;
+		for (int i = 0; i < m; i++) {
+
+			for (int j = 0; j < n; j++) {
+				index = j * m + i;
+				_values[index] = getValue(i + 1, j + 1);
+			}
+
+		}
+		return Matrix<T>(n, m, zero, one, _values);
+	}
+
+	//Swap rows
+	Matrix<T> swapRows(int rowA, int rowB){
+		if( rowA < 1 || rowA > m || rowB < 1 || rowB > m ){
+			throw std::out_of_range("Row index must be between 1 and rowsCount()");
+		}
+
+		rowA--;
+		rowB--;
+
+		Matrix<T> swapped(m,n, zero, one, getValues() );
+
+
+		if( rowA == rowB ){
+			return swapped;
+		}
+
+		T* _values = swapped.getValues();
+		T temp;
+		for(int i = 0; i < n; i++){
+			temp = _values[rowB * n + i];
+			_values[rowB * n + i] = _values[rowA * n + i];
+			_values[rowA * n + i] = temp;
+		}
+		return swapped;
+	}
+
+	//Swap columns
+	Matrix<T> swapColumns(int colA, int colB) {
+		if (colA < 1 || colA > n || colB < 1 || colB > n) {
+			throw std::out_of_range(
+					"Column index must be between 1 and columnsCount()");
+		}
+
+		colA--;
+		colB--;
+
+		Matrix<T> swapped(m, n, zero, one, getValues());
+
+		if (colA == colB) {
+			return swapped;
+		}
+
+		T* _values = swapped.getValues();
+		T temp;
+		for (int i = 0; i < m; i++) {
+			temp = _values[i * n + colB];
+			_values[i * n + colB] = _values[i * n + colA];
+			_values[i * n + colA] = temp;
+		}
+		return swapped;
+	}
+
 	//Equality operator
 	friend bool operator==(const Matrix<T>& A, const Matrix<T>& B) {
 
@@ -220,6 +287,12 @@ public:
 			Matrix<T> const &B) {
 		int Rows = B.getRowsCount();
 		int Columns = B.getColumnsCount();
+
+		if (m != Rows || n != Columns) {
+			throw std::domain_error("Rows and columns count must match.");
+		}
+
+
 		T _values[Rows * Columns];
 		int index = 0;
 		for (int i = 0; i < Rows; i++) {
@@ -236,6 +309,11 @@ public:
 	Matrix<T> operator-(Matrix<T> const &B) {
 		int Rows = B.getRowsCount();
 		int Columns = B.getColumnsCount();
+
+		if (m != Rows || n != Columns) {
+			throw std::domain_error("Rows and columns count must match.");
+		}
+
 		T _values[Rows * Columns];
 		int index = 0;
 		for (int i = 0; i < Rows; i++) {
