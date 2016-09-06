@@ -218,7 +218,36 @@ const lest::test specification[] =
 
 		EXPECT_THROWS_AS( B.swapColumns(2,4), std::out_of_range );
 		EXPECT_THROWS_AS( B.swapColumns(0,2), std::out_of_range );
-	}
+	},
+
+	CASE("Concatenate matrices"){
+		int val[4] = {1, 2, 1, 2};
+		int val2[6] = {3, 4, 5, 3, 4, 5};
+		int concat[10] = {1, 2, 3, 4, 5, 1, 2, 3, 4, 5};
+		Matrix<int> A( 2 ,2, 0, 1, val);
+		Matrix<int> B( 2 ,3, 0, 1, val2);
+		Matrix<int> A_B( 2 ,5, 0, 1, concat);
+
+		EXPECT( A.concat(B) == A_B );
+		EXPECT_THROWS_AS( A_B.transpose().concat(A_B), std::domain_error );
+	},
+
+	CASE("Split a matrix in two"){
+		int whole[4] = {1, 2, 3, 4};
+		int left[2] = {1, 3};
+		int right[2] = {2, 4};
+		Matrix<int> A_B(2, 2, 0, 1, whole);
+		Matrix<int> A(2, 1, 0, 1, left);
+		Matrix<int> B(2, 1, 0, 1, right);
+
+		Matrix<int> lMatrix;
+		Matrix<int> rMatrix;
+
+		A_B.split(1, lMatrix, rMatrix);
+		EXPECT( lMatrix == A );
+		EXPECT( rMatrix == B );
+		EXPECT( lMatrix.concat(rMatrix) == A_B );
+	},
 };
 
 int main( int argc, char * argv[] )

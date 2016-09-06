@@ -76,6 +76,8 @@ public:
 	}
 
 	//Constructors
+	Matrix():m(0), n(0), zero(0), one(1){}
+
 	Matrix(const std::size_t& rows, const std::size_t& columns, const T& z0,
 			const T& o1) :
 			m(rows), n(columns), zero(z0), one(o1) {
@@ -219,6 +221,50 @@ public:
 			_values[i * n + colA] = temp;
 		}
 		return swapped;
+	}
+
+	//Concatenate the columns of a given matrix to this instance
+	Matrix<T> concat(const Matrix<T>& B) {
+		if( B.getRowsCount() !=  m){
+			throw std::domain_error("Rows count must match.");
+		}
+
+		std::size_t _n = n + B.getColumnsCount();
+
+		T _values[m * _n];
+		for(int r = 0; r < m; r++){
+			for(int c = 0; c < _n; c++ ){
+				_values[r * _n + c ] = c < n ? values[r * n + c] : B.getValue(r + 1, c + 1 - n);
+			}
+		}
+
+		return Matrix<T>(m, _n, zero, one, _values);
+	}
+
+	//Split the matrix into 2.
+	//left points to the part of the matrix left of the splitColumn (included), right points to the part of the matrix right of the splitColumn (excluded)
+	void split(int splitColumn, Matrix<T>& left, Matrix<T>& right){
+		if( splitColumn < 1 || splitColumn >= n){
+			throw std::out_of_range(
+								"Split Column index must in the range ] 1; columnsCount() [");
+		}
+
+		T leftValues[m * splitColumn];
+
+		T rightValues[m * (n - splitColumn)];
+
+		for(int r = 0; r < m; r++){
+			for( int c = 0; c < n; c++){
+				if( c < splitColumn ){
+					leftValues[r * splitColumn + c] = values[r * n + c];
+				}else{
+					rightValues[r * (n-splitColumn) + c - splitColumn] = values[r * n + c];
+				}
+			}
+		}
+
+		left = Matrix<T>(m, splitColumn, zero, one, leftValues);
+		right = Matrix<T>(m, n - splitColumn, zero, one, rightValues);
 	}
 
 	//Equality operator
