@@ -6,6 +6,7 @@
 #include <limits>
 #include <stdexcept>
 
+
 /*
  * matrix2.cpp
  *
@@ -73,6 +74,30 @@ public:
 			}
 		}
 		return I;
+	}
+
+	static Matrix<T> getColumnsExchangeMatrix(const Matrix<T> matrix, int c1, int c2){
+		T zero = matrix.getZero();
+		T one = matrix.getOne();
+		int m = matrix.getRowsCount();
+		int n = matrix.getColumnsCount();
+
+		Matrix<T> xchange = Matrix<T>::identity( n, n, zero, one);
+		if( c1 == c2 ){
+			return xchange;
+		}
+
+		if( c1 < 1 || c2 < 1 || c1 > n || c2 > n  ){
+			std::ostringstream err;
+			err << "Column indices (" << c1 << "," << c2 << ") must be between 1 and " << n;
+			throw std::out_of_range( err.str() );
+		}
+
+		xchange.setValue(c1, c1, zero);
+		xchange.setValue(c2, c2, zero);
+		xchange.setValue(c1, c2, one);
+		xchange.setValue(c2, c1, one);
+		return xchange;
 	}
 
 	//Constructors
@@ -177,24 +202,7 @@ public:
 			throw std::out_of_range("Row index must be between 1 and rowsCount()");
 		}
 
-		rowA--;
-		rowB--;
-
-		Matrix<T> swapped(m,n, zero, one, getValues() );
-
-
-		if( rowA == rowB ){
-			return swapped;
-		}
-
-		T* _values = swapped.getValues();
-		T temp;
-		for(int i = 0; i < n; i++){
-			temp = _values[rowB * n + i];
-			_values[rowB * n + i] = _values[rowA * n + i];
-			_values[rowA * n + i] = temp;
-		}
-		return swapped;
+		return this->transpose().swapColumns(rowA, rowB).transpose();
 	}
 
 	//Swap columns
@@ -204,23 +212,7 @@ public:
 					"Column index must be between 1 and columnsCount()");
 		}
 
-		colA--;
-		colB--;
-
-		Matrix<T> swapped(m, n, zero, one, getValues());
-
-		if (colA == colB) {
-			return swapped;
-		}
-
-		T* _values = swapped.getValues();
-		T temp;
-		for (int i = 0; i < m; i++) {
-			temp = _values[i * n + colB];
-			_values[i * n + colB] = _values[i * n + colA];
-			_values[i * n + colA] = temp;
-		}
-		return swapped;
+		return *this * Matrix<T>::getColumnsExchangeMatrix( *this, colA, colB );
 	}
 
 	//Concatenate the columns of a given matrix to this instance
@@ -265,6 +257,16 @@ public:
 
 		left = Matrix<T>(m, splitColumn, zero, one, leftValues);
 		right = Matrix<T>(m, n - splitColumn, zero, one, rightValues);
+	}
+
+	// Perform the L * U decomposition of the matrix.
+	void toLU(Matrix<T>& L, Matrix<T>& U){
+
+		//Create an copy of this matrix augmented by the m by m identity matrix
+		Matrix<T> augmented = concat(Matrix<T>::identity( m, m, zero, one ) );
+
+		//Starting from the 1st row, for each row, find the first non zero value
+
 	}
 
 	//Equality operator
