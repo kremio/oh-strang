@@ -76,20 +76,16 @@ public:
 		return I;
 	}
 
-	static Matrix<T> getColumnsExchangeMatrix(const Matrix<T> matrix, int c1, int c2){
-		T zero = matrix.getZero();
-		T one = matrix.getOne();
-		int m = matrix.getRowsCount();
-		int n = matrix.getColumnsCount();
+	static Matrix<T> getPermutationMatrix(int size, T zero, T one, int c1, int c2){
 
-		Matrix<T> xchange = Matrix<T>::identity( n, n, zero, one);
+		Matrix<T> xchange = Matrix<T>::identity( size, size, zero, one);
 		if( c1 == c2 ){
 			return xchange;
 		}
 
-		if( c1 < 1 || c2 < 1 || c1 > n || c2 > n  ){
+		if( c1 < 1 || c2 < 1 || c1 > size || c2 > size  ){
 			std::ostringstream err;
-			err << "Column indices (" << c1 << "," << c2 << ") must be between 1 and " << n;
+			err << "Column indices (" << c1 << "," << c2 << ") must be between 1 and " << size;
 			throw std::out_of_range( err.str() );
 		}
 
@@ -202,7 +198,7 @@ public:
 			throw std::out_of_range("Row index must be between 1 and rowsCount()");
 		}
 
-		return this->transpose().swapColumns(rowA, rowB).transpose();
+		return Matrix<T>::getPermutationMatrix( m, zero, one, rowA, rowB ) * *this;
 	}
 
 	//Swap columns
@@ -212,7 +208,7 @@ public:
 					"Column index must be between 1 and columnsCount()");
 		}
 
-		return *this * Matrix<T>::getColumnsExchangeMatrix( *this, colA, colB );
+		return *this * Matrix<T>::getPermutationMatrix( n, zero, one, colA, colB );
 	}
 
 	//Concatenate the columns of a given matrix to this instance
@@ -264,8 +260,40 @@ public:
 
 		//Create an copy of this matrix augmented by the m by m identity matrix
 		Matrix<T> augmented = concat(Matrix<T>::identity( m, m, zero, one ) );
-
+		int augmentedN = augmented.getColumnsCount();
 		//Starting from the 1st row, for each row, find the first non zero value
+		int rC = 0;
+		T vR = zero;
+		T vU = zero;
+		for(int r = 1; r <= m; r++){
+			rC = 1;
+			while( rC <= n && augmented.getValue(r, rC) == zero){
+				rC++;
+			}
+			if( rC > n){
+				continue; //no non-zero values on this row
+			}
+			vR = augmented.getValue(r, rC);
+			//For each row under r, look for a non zero value at column rC
+			for( int rU = r + 1; rU <= m; rU++ ){
+				vU = augmented.getValue( rU, rC );
+				if( vU == zero ){
+					continue;
+				}
+				//Compute the multiplier to turn vU into zero
+				vU /= vR;
+				//Apply to the row
+				for(int c = rC; c <= augmentedN; c++ ){
+					if( c <= n){
+						augmented.setValue( rU, c, augmented.getValue(rU, c) - augmented.getValue(r, c) * vU );
+					}else{
+						augmented.setValue( rU, c, augmented.getValue(rU, c) + augmented.getValue(r, c) * vU );
+					}
+				}
+			}
+		}
+
+		augmented.split(m, U, L);
 
 	}
 
