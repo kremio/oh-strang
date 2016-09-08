@@ -248,6 +248,43 @@ const lest::test specification[] =
 		EXPECT( rMatrix == B );
 		EXPECT( lMatrix.concat(rMatrix) == A_B );
 	},
+
+	CASE("LU decomposition"){
+		Matrix<float> L;
+		Matrix<float> U;
+		bool isSingular;
+
+		float valA[9] = {1,4,-3,-2,8,5,3,4,7};
+		float l[9] = {1,  0,  0,  -2,  1,  0, 3,  -0.5,  1 };
+		float u[9] = {1,  4,  -3,  0,  16,  -1, 0,  0,  15.5};
+		Matrix<float> A(3, 3, 0, 1, valA);
+		Matrix<float> expectedL(3,3,0,1, l);
+		Matrix<float> expectedU(3,3,0,1, u);
+
+		isSingular = A.toLU(L, U);
+
+		EXPECT( isSingular );
+		EXPECT( L == expectedL );
+		EXPECT( U == expectedU );
+		EXPECT( ( L * U) == A );
+
+		//This one requires a row exchange
+		float valB[9] = {0,1,4, 1,0,3, 2,4,-7 };
+		Matrix<float> B(3, 3, 0, 1, valB);
+
+		isSingular = B.toLU(L, U);
+		EXPECT( isSingular );
+		EXPECT( ( L * U) == B );
+
+		//This one is not singular
+		float valC[9] = {1,2,3, 2,5,1, 1,3,-2 };
+		Matrix<float> C(3, 3, 0, 1, valC);
+
+		isSingular = C.toLU(L, U);
+
+		EXPECT( !isSingular );
+		EXPECT( ( L * U) == C );
+	}
 };
 
 int main( int argc, char * argv[] )

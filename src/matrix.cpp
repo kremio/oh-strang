@@ -255,46 +255,72 @@ public:
 		right = Matrix<T>(m, n - splitColumn, zero, one, rightValues);
 	}
 
-	// Perform the L * U decomposition of the matrix.
-	void toLU(Matrix<T>& L, Matrix<T>& U){
 
-		//Create an copy of this matrix augmented by the m by m identity matrix
-		Matrix<T> augmented = concat(Matrix<T>::identity( m, m, zero, one ) );
-		int augmentedN = augmented.getColumnsCount();
-		//Starting from the 1st row, for each row, find the first non zero value
+	// Perform the L * U decomposition of the matrix.
+	bool toLU(Matrix<T>& L, Matrix<T>& U){
+
+		bool singular = true;
+
+		//Create an copy of this matrix
+		U = Matrix<T>(m, n, zero, one, getValues());
+
+		//This matrix will hold the multipliers
+		L = Matrix<T>::identity( m, m, zero, one );
+
+		//These matrices will store row exchange operations
+		Matrix<T> rowExchange;
+		Matrix<T> rowExchanges = Matrix<T>::identity( m, m, zero, one );
+
+
+		//Starting from the 1st row, for each row except the last, find the first non zero value
 		int rC = 0;
-		T vR = zero;
+		T pivotValue = zero;
 		T vU = zero;
-		for(int r = 1; r <= m; r++){
-			rC = 1;
-			while( rC <= n && augmented.getValue(r, rC) == zero){
+		for(int pivot = 1; pivot < m; pivot++){
+			rC = pivot;
+			while( rC <= m && U.getValue(rC, pivot) == zero){
 				rC++;
 			}
-			if( rC > n){
-				continue; //no non-zero values on this row
+
+			if( rC > m){ //no non-zero values for this pivot (the matrix
+				singular = false;
+				continue;
 			}
-			vR = augmented.getValue(r, rC);
-			//For each row under r, look for a non zero value at column rC
-			for( int rU = r + 1; rU <= m; rU++ ){
-				vU = augmented.getValue( rU, rC );
+
+			if( rC != pivot ){ //row exchange required
+				rowExchange = Matrix<T>::getPermutationMatrix(m, zero, one, pivot, rC);
+				U = rowExchange * U;
+				rowExchanges =  rowExchange * rowExchanges;
+				rC = pivot;
+			}
+
+			pivotValue = U.getValue(pivot, pivot);
+
+			//For each row under the pivot, look for a non zero value
+			for( int rU = pivot + 1; rU <= m; rU++ ){
+				vU = U.getValue( rU, pivot );
 				if( vU == zero ){
 					continue;
 				}
+
 				//Compute the multiplier to turn vU into zero
-				vU /= vR;
+
+				vU /= pivotValue;
+				//store in L
+				L.setValue( rU, pivot, vU );
+
 				//Apply to the row
-				for(int c = rC; c <= augmentedN; c++ ){
-					if( c <= n){
-						augmented.setValue( rU, c, augmented.getValue(rU, c) - augmented.getValue(r, c) * vU );
-					}else{
-						augmented.setValue( rU, c, augmented.getValue(rU, c) + augmented.getValue(r, c) * vU );
-					}
+				for(int c = rC; c <= n; c++ ){
+					U.setValue( rU, c, U.getValue(rU, c) - U.getValue(pivot, c) * vU );
 				}
 			}
 		}
 
-		augmented.split(m, U, L);
+		//Apply the inverse of the row exchanges matrix to L
+		L = rowExchanges.transpose() * L;
 
+		//Check the last row for singularity
+		return ( singular && U.getValue(m, m) == zero )? false : singular;
 	}
 
 	//Equality operator
