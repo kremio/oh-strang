@@ -284,7 +284,8 @@ const lest::test specification[] =
 
 		EXPECT( !isSingular );
 		EXPECT( ( L * U) == C );
-	}
+	},
+
 };
 
 int main( int argc, char * argv[] )

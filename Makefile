@@ -5,8 +5,10 @@ EMSDK_HOME = ~/playground/emscripten/emsdk_portable
 EMSCRIPTEN_HOME = $(EMSDK_HOME)/emscripten/1.35.0
 CLANG = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 
-SOURCES = $(wildcard src/*.cpp) $(wildcard src/*.c)
+SOURCES = $(wildcard src/*) $(wildcard src/*.c)
+BINDINGS =  $(wildcard binding/*) $(wildcard src/*.c)
 OBJECTS = $(patsubst %.cpp,%.o,$(patsubst %.c,%.o,$(SOURCES)))
+BINDING_OBJECTS = $(patsubst %.cpp,%.o,$(patsubst %.c,%.o,$(BINDINGS)))
 TESTS = $(wildcard test/*.cpp) $(wildcard test/*.c)
 TESTS_OBJECTS = $(patsubst %.cpp,%.o,$(patsubst %.c,%.o,$(TESTS)))
 
@@ -37,8 +39,8 @@ set-html: set-js
 compile: $(OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $(PROJECT).$(TARGET)
 	
-compile-js : $(OBJECTS)
-	$(CC) $(LDFLAGS) $^ --post-js glue.js -o $(PROJECT).$(TARGET)
+compile-js : $(OBJECTS) $(BINDING_OBJECTS)
+	$(CC) $(LDFLAGS) $^ --post-js glue.js -o js/$(PROJECT).$(TARGET)
 
 compile-test: $(TESTS_OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $(PROJECT).test

@@ -6,8 +6,11 @@ interface DoubleMatrix {
 		double getValue(long row, long column);
 		double setValue(long row, long column, double val);
 		
+		[Const] DOMString asString();
+		
 		[Value] DoubleMatrix scalarMul(double scalar);
 		[Value] DoubleMatrix matrixMul([Ref]DoubleMatrix scalar);
+		[Value] DoubleMatrix transpose();
 		
 		[Value] static DoubleMatrix identity(long rows, long columns);
 };
