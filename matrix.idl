@@ -11,6 +11,14 @@ interface DoubleMatrix {
 		[Value] DoubleMatrix scalarMul(double scalar);
 		[Value] DoubleMatrix matrixMul([Ref]DoubleMatrix scalar);
 		[Value] DoubleMatrix transpose();
+		[Value] DoubleMatrix swapColumns(long colA, long colB);
+		[Value] DoubleMatrix swapRows(long rowA, long rowB);
+		[Value] DoubleMatrix concat([Ref] DoubleMatrix B);
 		
-		[Value] static DoubleMatrix identity(long rows, long columns);
+		void split(long splitColumn, [Ref] DoubleMatrix left, [Ref] DoubleMatrix right);
+		boolean toLU([Ref] DoubleMatrix L, [Ref] DoubleMatrix U);
+		
+		boolean equal([Ref] DoubleMatrix B);
+				
+		[Value] static DoubleMatrix getIdentity(long rows, long columns);
 };
