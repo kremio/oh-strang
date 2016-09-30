@@ -1,6 +1,8 @@
 interface DoubleMatrix {
 		void DoubleMatrix(long rows, long columns);
 		void DoubleMatrix(long rows, long columns, double fillValue);
+		long getZero();
+		long getOne();
 		long getRowsCount();
 		long getColumnsCount();
 		double getValue(long row, long column);

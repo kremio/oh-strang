@@ -1,0 +1,23 @@
+{
+  "name": "oh-strang",
+  "version": “0.0.2”,
+  "description": "A linear algebra library based on Pr. Strang's MIT lectures.",
+  "main": "Matrix.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kremio/oh-strang.git"
+  },
+  "keywords": [
+    "linear",
+    "algebra"
+  ],
+  "author": "Jonathan Cremieux",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kremio/oh-strang/issues"
+  },
+  "homepage": "https://github.com/kremio/oh-strang#readme"
+}

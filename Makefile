@@ -2,7 +2,7 @@
 #GNU Make docs: http://www.gnu.org/software/make/manual/make.html
 #Emscripten: http://kripken.github.io/emscripten-site/docs/
 EMSDK_HOME = ~/playground/emscripten/emsdk_portable
-EMSCRIPTEN_HOME = $(EMSDK_HOME)/emscripten/1.35.0
+EMSCRIPTEN_HOME = $(EMSDK_HOME)/emscripten/master
 CLANG = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 
 SOURCES = $(wildcard src/*) $(wildcard src/*.c)
@@ -40,7 +40,7 @@ compile: $(OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $(PROJECT).$(TARGET)
 	
 compile-js : $(OBJECTS) $(BINDING_OBJECTS)
-	$(CC) $(LDFLAGS) $^ --post-js glue.js -o js/$(PROJECT).$(TARGET)
+	$(CC) $(LDFLAGS) $^ --pre-js pre.js --post-js glue.js  --post-js post.js -o js/$(PROJECT).$(TARGET)
 
 compile-test: $(TESTS_OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $(PROJECT).test
