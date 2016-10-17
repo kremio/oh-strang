@@ -2,7 +2,7 @@
 A linear algebra library written in C/C++ and compiled to JavaScript.
 
 ## The story
-This is a  week-end project to consolidate what I've learned from Pr. Strang MIT lectures on linear algebra and getting down and directy with Emscripten.
+This is a  weekend project to consolidate what I've learned from Pr. Strang MIT lectures on linear algebra and getting down and dirty with Emscripten.
 I'm sure they are plenty of good libraries written in portable C/C++ or JavaScript for that purpose, but the point is to learn.
 
 ## References
