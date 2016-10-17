@@ -254,7 +254,11 @@ const lest::test specification[] =
 		Matrix<float> U;
 		bool isSingular;
 
-		float valA[9] = {1,4,-3,-2,8,5,3,4,7};
+		float valA[9] = {
+				1,4,-3,
+				-2,8,5,
+				3,4,7
+		};
 		float l[9] = {1,  0,  0,  -2,  1,  0, 3,  -0.5,  1 };
 		float u[9] = {1,  4,  -3,  0,  16,  -1, 0,  0,  15.5};
 		Matrix<float> A(3, 3, 0, 1, valA);
@@ -263,7 +267,7 @@ const lest::test specification[] =
 
 		isSingular = A.toLU(L, U);
 
-		EXPECT( isSingular );
+		EXPECT( !isSingular );
 		EXPECT( L == expectedL );
 		EXPECT( U == expectedU );
 		EXPECT( ( L * U) == A );
@@ -273,17 +277,49 @@ const lest::test specification[] =
 		Matrix<float> B(3, 3, 0, 1, valB);
 
 		isSingular = B.toLU(L, U);
-		EXPECT( isSingular );
+		EXPECT( !isSingular );
 		EXPECT( ( L * U) == B );
 
-		//This one is not singular
-		float valC[9] = {1,2,3, 2,5,1, 1,3,-2 };
+		//This one is singular
+		float valC[9] = {
+				1,2,3,
+				2,5,1,
+				1,3,-2
+		};
 		Matrix<float> C(3, 3, 0, 1, valC);
 
 		isSingular = C.toLU(L, U);
 
-		EXPECT( !isSingular );
+		EXPECT( isSingular );
 		EXPECT( ( L * U) == C );
+	},
+
+	CASE("Determinant"){
+		float valA[9] = {
+			1,4,-3,
+			-2,8,5,
+			3,4,7
+	    };
+		Matrix<float> A(3, 3, 0, 1, valA);
+		float determinant = A.det();
+		EXPECT( determinant == 248 );
+
+		float valB[6] = {
+				1,0,0,
+				0,2,0
+		};
+		Matrix<float> B(2, 3, 0, 1, valB);
+		EXPECT_THROWS_AS( B.det(), std::domain_error ); //rectangular matrix
+
+		//This one is singular
+		float valC[9] = {
+				1,2,3,
+				2,5,1,
+				1,3,-2
+		};
+		Matrix<float> C(3, 3, 0, 1, valC);
+		determinant = C.det();
+	    EXPECT( determinant == 0 );
 	},
 
 };

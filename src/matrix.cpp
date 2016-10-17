@@ -259,7 +259,7 @@ public:
 	// Perform the L * U decomposition of the matrix.
 	bool toLU( C& L, C& U ){
 
-		bool singular = true;
+		bool singular = false;
 
 		//Create an copy of this matrix
 		U = C(m, n, zero, one, getValues());
@@ -283,7 +283,7 @@ public:
 			}
 
 			if( rC > m){ //no non-zero values for this pivot (the matrix
-				singular = false;
+				singular = true;
 				continue;
 			}
 
@@ -319,7 +319,30 @@ public:
 		L = rowExchanges.transpose() * L;
 
 		//Check the last row for singularity
-		return ( singular && U.getValue(m, m) == zero )? false : singular;
+		return ( !singular && U.getValue(m, m) == zero )? true : singular;
+	}
+
+	//Calculate determinant
+	T det(){
+		if (m != n) {
+			throw std::domain_error("Only a square matrix has a determinant.");
+		}
+
+		C L;
+		C U;
+
+		//Perform LU decomposition
+		if( toLU( L, U ) ){ //The matrix is singular
+			return zero;
+		}
+
+		T d = 1;
+
+		for (int i = 1; i <= m; i++) {
+				d *= U.getValue(i,i);
+		}
+
+		return d;
 	}
 
 	//Equality operator
