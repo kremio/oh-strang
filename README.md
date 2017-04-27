@@ -14,3 +14,5 @@ http://kripken.github.io/emscripten-site/index.html
 ## Development Environment
 The code is written in Eclipse Neon with the CDT plugin.
 Native compilation is done with the CLANG LLVM-frontend, and JS compilation with the Emscripten tools.
+
+## To be continued
